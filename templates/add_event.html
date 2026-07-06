@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Create Event{% endblock %}
+{% block content %}
+<div style="max-width:680px;">
+  <div style="margin-bottom:1.5rem;">
+    <a href="{{ url_for('dashboard') }}" style="color:var(--muted);text-decoration:none;font-size:.875rem;"><i class="fas fa-arrow-left me-2"></i>Back</a>
+    <h4 style="font-family:'Space Grotesk',sans-serif;font-weight:800;margin-top:.75rem;margin-bottom:.25rem;">Create Event</h4>
+    <p style="color:var(--muted);font-size:.875rem;">Post networking events, workshops, seminars — visible to all users.</p>
+  </div>
+  <div class="card">
+    <div class="card-body" style="padding:2rem;">
+      <form method="POST">
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">Event Title <span style="color:red">*</span></label>
+            <input type="text" name="title" class="form-control" required placeholder="e.g. Annual Alumni Meet 2025">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Event Type</label>
+            <select name="event_type" class="form-select">
+              {% for t in ['Networking','Workshop','Seminar','Webinar','Career Fair','Cultural','Sports','Other'] %}
+              <option>{{ t }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Event Date <span style="color:red">*</span></label>
+            <input type="date" name="event_date" class="form-control" required>
+          </div>
+          <div class="col-md-8">
+            <label class="form-label">Venue / Location</label>
+            <input type="text" name="location" class="form-control" placeholder="e.g. University Auditorium or Online (Zoom)">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Max Seats</label>
+            <input type="number" name="max_seats" class="form-control" value="100" min="1">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="4" placeholder="What will happen at this event? Who should attend?"></textarea>
+          </div>
+        </div>
+        <div style="margin-top:1.5rem;display:flex;gap:.75rem;">
+          <button type="submit" class="btn btn-success px-4"><i class="fas fa-calendar-check me-2"></i>Create Event</button>
+          <a href="{{ url_for('dashboard') }}" class="btn btn-light">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

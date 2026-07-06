@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Post Job Opportunity{% endblock %}
+{% block content %}
+<div style="max-width:720px;">
+  <div style="margin-bottom:1.5rem;">
+    <a href="{{ url_for('dashboard') }}" style="color:var(--muted);text-decoration:none;font-size:.875rem;"><i class="fas fa-arrow-left me-2"></i>Back to Dashboard</a>
+    <h4 style="font-family:'Space Grotesk',sans-serif;font-weight:800;margin-top:.75rem;margin-bottom:.25rem;">Post Placement Opportunity</h4>
+    <p style="color:var(--muted);font-size:.875rem;">Help students find their dream jobs — your post will be visible to all students.</p>
+  </div>
+  <div class="card">
+    <div class="card-body" style="padding:2rem;">
+      <form method="POST">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Company Name <span style="color:red">*</span></label>
+            <input type="text" name="company_name" class="form-control" required placeholder="e.g. Google India">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Job Title <span style="color:red">*</span></label>
+            <input type="text" name="job_title" class="form-control" required placeholder="e.g. Software Engineer">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Job Type</label>
+            <select name="job_type" class="form-select">
+              {% for t in ['Full-Time','Part-Time','Internship','Contract','Remote'] %}
+              <option>{{ t }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Location</label>
+            <input type="text" name="location" class="form-control" placeholder="e.g. Bangalore, India">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Salary / Stipend</label>
+            <input type="text" name="salary_range" class="form-control" placeholder="e.g. 12-18 LPA">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Job Description <span style="color:red">*</span></label>
+            <textarea name="description" class="form-control" rows="4" required placeholder="Describe the role, responsibilities, team culture..."></textarea>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Requirements / Eligibility</label>
+            <textarea name="requirements" class="form-control" rows="3" placeholder="e.g. B.Tech CS/IT, 60%+ aggregate, no backlogs, CGPA 7+..."></textarea>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Apply Link</label>
+            <input type="text" name="apply_link" class="form-control" placeholder="careers.company.com or email">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Application Deadline</label>
+            <input type="date" name="deadline" class="form-control">
+          </div>
+        </div>
+        <div style="margin-top:1.5rem;display:flex;gap:.75rem;">
+          <button type="submit" class="btn btn-primary px-4"><i class="fas fa-paper-plane me-2"></i>Post Opportunity</button>
+          <a href="{{ url_for('dashboard') }}" class="btn btn-light">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

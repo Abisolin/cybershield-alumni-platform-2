@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Manage Users{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+  <h4 style="font-family:'Space Grotesk',sans-serif;font-weight:800;margin:0;">Manage Users</h4>
+  <div style="display:flex;gap:.5rem;">
+    {% for r,lbl in [('','All'),('admin','Admin'),('alumni','Alumni'),('student','Student')] %}
+    <a href="{{ url_for('admin_users', role=r) }}" class="btn btn-sm {% if role_filter==r %}btn-primary{% else %}btn-light{% endif %}">{{ lbl }}</a>
+    {% endfor %}
+  </div>
+</div>
+<div class="card">
+  <div style="overflow-x:auto;">
+    <table class="table-custom" style="width:100%;">
+      <thead>
+        <tr><th>Name</th><th>Email</th><th>Role</th><th>Dept</th><th>Security</th><th>Status</th><th>Joined</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td>
+            <div style="font-weight:600;font-size:.875rem;">{{ u['full_name'] }}</div>
+            <div style="color:var(--muted);font-size:.75rem;">{{ u['student_id'] or '—' }}</div>
+          </td>
+          <td style="font-size:.82rem;">{{ u['email'] }}</td>
+          <td><span class="badge-role-{{ u['role'] }}">{{ u['role'].upper() }}</span></td>
+          <td style="font-size:.82rem;color:var(--muted);">{{ u['department'] or '—' }}</td>
+          <td><span class="hash-badge hb-{{ u['hash_method'] }}" style="font-size:.65rem;">{{ u['hash_method'].upper() }}</span></td>
+          <td>
+            <span style="font-size:.78rem;font-weight:600;padding:.25rem .55rem;border-radius:6px;
+              background:{% if u['is_active'] %}#d1fae5;color:#065f46{% else %}#fee2e2;color:#991b1b{% endif %};">
+              {% if u['is_active'] %}Active{% else %}Disabled{% endif %}
+            </span>
+          </td>
+          <td style="font-size:.78rem;color:var(--muted);">{{ u['created_at'][:10] }}</td>
+          <td>
+            <div style="display:flex;gap:.4rem;">
+              {% if u['id'] != session.user_id %}
+              <form method="POST" action="{{ url_for('toggle_user', uid=u['id']) }}" class="d-inline">
+                <button class="btn btn-sm {% if u['is_active'] %}btn-outline-warning{% else %}btn-outline-success{% endif %}" style="font-size:.75rem;">
+                  {% if u['is_active'] %}Disable{% else %}Enable{% endif %}
+                </button>
+              </form>
+              <form method="POST" action="{{ url_for('delete_user', uid=u['id']) }}" class="d-inline" onsubmit="return confirm('Permanently delete {{ u['full_name'] }}?')">
+                <button class="btn btn-sm btn-outline-danger" style="font-size:.75rem;">Delete</button>
+              </form>
+              {% else %}
+              <span style="color:var(--muted);font-size:.75rem;">You</span>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

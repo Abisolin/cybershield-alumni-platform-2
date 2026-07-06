@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block auth_content %}
+<div class="auth-wrap">
+  <div style="max-width:1000px;width:100%;text-align:center;color:#fff;">
+    <!-- Hero -->
+    <div style="margin-bottom:3rem;">
+      <div style="width:72px;height:72px;background:linear-gradient(135deg,#6366f1,#818cf8);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2rem;">🎓</div>
+      <h1 style="font-family:'Space Grotesk',sans-serif;font-size:3rem;font-weight:800;line-height:1.1;margin-bottom:1rem;">
+        Alumni <span style="background:linear-gradient(90deg,#818cf8,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Management</span> System
+      </h1>
+      <p style="color:rgba(255,255,255,.6);font-size:1.1rem;margin-bottom:2rem;">Connect students with alumni opportunities. Three roles, one platform.</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <a href="{{ url_for('login') }}" style="background:#6366f1;color:#fff;padding:.85rem 2rem;border-radius:10px;text-decoration:none;font-weight:700;font-size:1rem;">
+          <i class="fas fa-sign-in-alt me-2"></i>Login
+        </a>
+        <a href="{{ url_for('register') }}" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:.85rem 2rem;border-radius:10px;text-decoration:none;font-weight:700;font-size:1rem;">
+          <i class="fas fa-user-plus me-2"></i>Register
+        </a>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:3rem;">
+      {% for icon,val,lbl,color in [('fas fa-user-tie',stats.alumni,'Alumni','#818cf8'),('fas fa-user-graduate',stats.students,'Students','#34d399'),('fas fa-briefcase',stats.placements,'Job Posts','#fbbf24'),('fas fa-calendar',stats.events,'Events','#f87171')] %}
+      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:1.5rem;">
+        <div style="font-size:1.8rem;color:{{ color }};font-weight:800;">{{ val }}</div>
+        <div style="color:rgba(255,255,255,.5);font-size:.8rem;margin-top:.25rem;">{{ lbl }}</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Role Cards -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;">
+      {% for icon,role,title,desc,color,border in [
+        ('fas fa-shield-alt','Admin','Admin','View all users, manage content, full control','#fbbf24','rgba(251,191,36,.3)'),
+        ('fas fa-user-tie','Alumni','Alumni','Post jobs, events, news. Guide students.','#818cf8','rgba(129,140,248,.3)'),
+        ('fas fa-graduation-cap','Student','Student','Explore opportunities posted by alumni.','#34d399','rgba(52,211,153,.3)')
+      ] %}
+      <div style="background:rgba(255,255,255,.05);border:1px solid {{ border }};border-radius:16px;padding:1.75rem;text-align:left;">
+        <div style="width:44px;height:44px;background:{{ border }};border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;">
+          <i class="{{ icon }}" style="color:{{ color }};font-size:1.1rem;"></i>
+        </div>
+        <div style="color:{{ color }};font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:.4rem;">{{ role }}</div>
+        <div style="color:#fff;font-weight:700;font-size:1.05rem;margin-bottom:.5rem;">{{ title }}</div>
+        <div style="color:rgba(255,255,255,.5);font-size:.85rem;">{{ desc }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

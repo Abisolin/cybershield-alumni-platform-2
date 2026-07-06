@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Audit Logs — Admin{% endblock %}
+{% block content %}
+<h4 style="font-family:'Space Grotesk',sans-serif;font-weight:800;margin-bottom:1.25rem;"><i class="fas fa-list me-2 text-success"></i>Audit Logs</h4>
+<div class="card">
+  <div style="overflow-x:auto;">
+    <table class="table-custom" style="width:100%;">
+      <thead><tr><th>#</th><th>User</th><th>Role</th><th>Action</th><th>IP Address</th><th>Timestamp</th></tr></thead>
+      <tbody>
+        {% for l in logs %}
+        <tr>
+          <td style="color:var(--muted);font-size:.78rem;">{{ l['id'] }}</td>
+          <td style="font-size:.85rem;">{{ l['full_name'] or 'Unknown' }}</td>
+          <td>{% if l['urole'] %}<span class="badge-role-{{ l['urole'] }}">{{ l['urole'].upper() }}</span>{% endif %}</td>
+          <td>
+            <span style="font-size:.78rem;font-weight:600;padding:.2rem .55rem;border-radius:5px;
+              background:{% if 'LOGIN' in l['action'] %}#d1fae5;color:#065f46
+              {% elif 'LOGOUT' in l['action'] %}#f3f4f6;color:#374151
+              {% elif 'PASSWORD' in l['action'] %}#fef3c7;color:#92400e
+              {% elif 'POST' in l['action'] %}#ede9fe;color:#5b21b6
+              {% elif 'APPLY' in l['action'] %}#dbeafe;color:#1e40af
+              {% else %}#f3f4f6;color:#374151{% endif %};">
+              {{ l['action'] }}
+            </span>
+          </td>
+          <td style="color:var(--muted);font-size:.78rem;font-family:monospace;">{{ l['ip_addr'] or '—' }}</td>
+          <td style="color:var(--muted);font-size:.78rem;">{{ l['timestamp'][:16] }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted);">No logs yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

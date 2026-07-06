@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}Alumni Dashboard{% endblock %}
+{% block content %}
+<div style="margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;">
+  <div>
+    <h4 style="font-family:'Space Grotesk',sans-serif;font-weight:800;margin-bottom:.2rem;">Welcome, {{ user['full_name'].split()[0] }}! 👋</h4>
+    <p style="color:var(--muted);font-size:.875rem;">{{ user['department'] }} | Class of {{ user['graduation_year'] }} | {{ user['company'] or 'Add your company' }}</p>
+  </div>
+  <span class="hash-badge hb-{{ user['hash_method'] }}" style="font-size:.8rem;padding:.4rem .9rem;">
+    <i class="fas fa-shield-alt me-1"></i>{{ user['hash_method'].upper() }}
+  </span>
+</div>
+
+<!-- Stats -->
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.75rem;">
+  {% for val,lbl,icon,g1,g2 in [
+    (stats.placements,'Jobs Posted','fa-briefcase','#1e1b4b','#312e81'),
+    (stats.applications,'Applications','fa-file-alt','#064e3b','#065f46'),
+    (stats.events,'Events Posted','fa-calendar','#78350f','#92400e'),
+    (stats.news,'News Posted','fa-newspaper','#4c1d95','#5b21b6'),
+  ] %}
+  <div class="stat-card" style="background:linear-gradient(135deg,{{ g1 }},{{ g2 }});">
+    <div class="sc-val">{{ val }}</div>
+    <div class="sc-lbl">{{ lbl }}</div>
+    <i class="fas {{ icon }} sc-icon"></i>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Quick Actions -->
+<div style="display:flex;gap:.75rem;margin-bottom:1.75rem;flex-wrap:wrap;">
+  <a href="{{ url_for('add_placement') }}" class="btn btn-primary">
+    <i class="fas fa-plus me-2"></i>Post Job Opportunity
+  </a>
+  <a href="{{ url_for('add_event') }}" class="btn btn-success">
+    <i class="fas fa-calendar-plus me-2"></i>Create Event
+  </a>
+  <a href="{{ url_for('add_news') }}" style="background:#7c3aed;border:none;" class="btn text-white">
+    <i class="fas fa-pen me-2"></i>Write News
+  </a>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+  <!-- My Placements -->
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span style="font-weight:700;font-size:.9rem;"><i class="fas fa-briefcase me-2 text-warning"></i>My Job Posts</span>
+      <a href="{{ url_for('add_placement') }}" class="btn btn-sm btn-primary">+ New</a>
+    </div>
+    <div style="padding:0;overflow:auto;max-height:300px;">
+      {% for p in my_placements %}
+      <div style="padding:.9rem 1.25rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-weight:600;font-size:.875rem;">{{ p['company_name'] }}</div>
+          <div style="color:var(--muted);font-size:.78rem;">{{ p['job_title'] }} · {{ p['job_type'] }}</div>
+        </div>
+        <form method="POST" action="{{ url_for('delete_placement', pid=p['id']) }}" onsubmit="return confirm('Delete this posting?')">
+          <button class="btn btn-sm btn-outline-danger">✕</button>
+        </form>
+      </div>
+      {% else %}
+      <div style="padding:2rem;text-align:center;color:var(--muted);">
+        <i class="fas fa-briefcase" style="font-size:2rem;margin-bottom:.75rem;opacity:.3;display:block;"></i>
+        No job posts yet. <a href="{{ url_for('add_placement') }}">Post one now →</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- My Events -->
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span style="font-weight:700;font-size:.9rem;"><i class="fas fa-calendar me-2 text-success"></i>My Events</span>
+      <a href="{{ url_for('add_event') }}" class="btn btn-sm btn-success">+ New</a>
+    </div>
+    <div style="padding:0;overflow:auto;max-height:300px;">
+      {% for e in my_events %}
+      <div style="padding:.9rem 1.25rem;border-bottom:1px solid var(--border);">
+        <div style="font-weight:600;font-size:.875rem;">{{ e['title'] }}</div>
+        <div style="color:var(--muted);font-size:.78rem;display:flex;gap:1rem;margin-top:.2rem;">
+          <span><i class="fas fa-calendar me-1"></i>{{ e['event_date'] }}</span>
+          <span><i class="fas fa-map-marker-alt me-1"></i>{{ e['location'] or 'TBD' }}</span>
+        </div>
+      </div>
+      {% else %}
+      <div style="padding:2rem;text-align:center;color:var(--muted);">
+        <i class="fas fa-calendar" style="font-size:2rem;margin-bottom:.75rem;opacity:.3;display:block;"></i>
+        No events yet. <a href="{{ url_for('add_event') }}">Create one →</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

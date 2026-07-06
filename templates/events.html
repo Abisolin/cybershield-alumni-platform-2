@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Events{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+  <h4 style="font-family:'Space Grotesk',sans-serif;font-weight:800;margin:0;"><i class="fas fa-calendar-alt me-2 text-success"></i>Events</h4>
+  {% if session.role in ['alumni','admin'] %}
+  <a href="{{ url_for('add_event') }}" class="btn btn-success"><i class="fas fa-plus me-2"></i>Create Event</a>
+  {% endif %}
+</div>
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;">
+  {% for e in events %}
+  <div class="card">
+    <div class="card-body" style="padding:1.5rem;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem;">
+        <span class="badge-type">{{ e['event_type'] }}</span>
+        <span style="font-size:.8rem;color:var(--muted);">{{ e['event_date'] }}</span>
+      </div>
+      <h6 style="font-weight:700;margin-bottom:.5rem;">{{ e['title'] }}</h6>
+      {% if e['description'] %}<p style="font-size:.82rem;color:var(--muted);margin-bottom:.75rem;">{{ e['description'][:120] }}{% if e['description']|length>120 %}...{% endif %}</p>{% endif %}
+      <div style="font-size:.8rem;color:var(--muted);margin-bottom:1rem;">
+        <i class="fas fa-map-marker-alt me-1 text-danger"></i>{{ e['location'] or 'TBD' }} &nbsp;·&nbsp;
+        <i class="fas fa-user me-1"></i>{{ e['organizer'] }} &nbsp;·&nbsp;
+        <i class="fas fa-users me-1"></i>{{ e['max_seats'] }} seats
+      </div>
+      {% if e['id'] in reg_ids %}
+      <span style="background:#d1fae5;color:#065f46;padding:.35rem .85rem;border-radius:7px;font-size:.8rem;font-weight:600;">✓ Registered</span>
+      {% else %}
+      <form method="POST" action="{{ url_for('register_event', eid=e['id']) }}" class="d-inline">
+        <button class="btn btn-success btn-sm"><i class="fas fa-ticket-alt me-1"></i>Register</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+  {% else %}
+  <div style="grid-column:span 2;text-align:center;padding:3rem;color:var(--muted);">No events posted yet.</div>
+  {% endfor %}
+</div>
+{% endblock %}

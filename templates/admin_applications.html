@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}All Applications — Admin{% endblock %}
+{% block content %}
+<h4 style="font-family:'Space Grotesk',sans-serif;font-weight:800;margin-bottom:1.25rem;">Student Applications</h4>
+<div class="card">
+  <div style="overflow-x:auto;">
+    <table class="table-custom" style="width:100%;">
+      <thead><tr><th>Student</th><th>Applied For</th><th>Company</th><th>Posted By</th><th>Cover Note</th><th>Applied At</th></tr></thead>
+      <tbody>
+        {% for a in apps %}
+        <tr>
+          <td>
+            <div style="font-weight:600;font-size:.875rem;">{{ a['student_name'] }}</div>
+            <div style="color:var(--muted);font-size:.75rem;">{{ a['student_email'] }}</div>
+          </td>
+          <td style="font-size:.85rem;">{{ a['job_title'] }}</td>
+          <td style="font-weight:600;font-size:.85rem;">{{ a['company_name'] }}</td>
+          <td style="font-size:.82rem;color:var(--muted);">{{ a['alumni_name'] }}</td>
+          <td style="font-size:.78rem;color:var(--muted);max-width:200px;">{{ (a['cover_note'] or '—')[:80] }}</td>
+          <td style="font-size:.78rem;color:var(--muted);">{{ a['applied_at'][:16] }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted);">No applications yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}Login — Alumni MS{% endblock %}
+{% block auth_content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <!-- LEFT -->
+    <div class="auth-left">
+      <div style="margin-bottom:2.5rem;">
+        <div style="width:52px;height:52px;background:rgba(255,255,255,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1.5rem;">🎓</div>
+        <h2 style="font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:800;margin-bottom:.75rem;">Welcome Back</h2>
+        <p style="opacity:.75;line-height:1.6;">Select your role and login securely with enterprise-grade password protection.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.75rem;">
+        {% for icon,role,desc,color in [('🛡️','Admin','Full system access','#fbbf24'),('👔','Alumni','Post jobs & events','#a5b4fc'),('🎓','Student','Explore opportunities','#6ee7b7')] %}
+        <div style="background:rgba(255,255,255,.1);border-radius:10px;padding:.85rem 1rem;display:flex;align-items:center;gap:.75rem;">
+          <span style="font-size:1.3rem;">{{ icon }}</span>
+          <div>
+            <div style="font-weight:700;font-size:.9rem;">{{ role }}</div>
+            <div style="opacity:.65;font-size:.78rem;">{{ desc }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <!-- RIGHT -->
+    <div class="auth-right">
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:1.6rem;margin-bottom:.35rem;">Sign In</h3>
+      <p style="color:var(--muted);font-size:.875rem;margin-bottom:2rem;">Access your alumni portal account</p>
+
+      <form method="POST">
+        <!-- Role Selector -->
+        <div style="margin-bottom:1.5rem;">
+          <label class="form-label">Select Your Role</label>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;">
+            {% for role,label,icon,color in [('admin','Admin','fa-shield-alt','#f59e0b'),('alumni','Alumni','fa-user-tie','#6366f1'),('student','Student','fa-graduation-cap','#10b981')] %}
+            <input type="radio" class="btn-check" name="role" id="r_{{ role }}" value="{{ role }}" {% if loop.index==2 %}checked{% endif %}>
+            <label for="r_{{ role }}" style="border:2px solid var(--border);border-radius:10px;padding:.7rem .5rem;text-align:center;cursor:pointer;transition:.15s;font-size:.82rem;font-weight:600;" class="role-opt">
+              <i class="fas {{ icon }}" style="color:{{ color }};display:block;font-size:1.2rem;margin-bottom:.3rem;"></i>
+              {{ label }}
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div style="margin-bottom:1rem;">
+          <label class="form-label">Email Address</label>
+          <div style="position:relative;">
+            <i class="fas fa-envelope" style="position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem;"></i>
+            <input type="email" name="email" class="form-control" style="padding-left:2.5rem;" placeholder="your@email.com" required autofocus>
+          </div>
+        </div>
+
+        <div style="margin-bottom:1.5rem;">
+          <label class="form-label">Password</label>
+          <div style="position:relative;">
+            <i class="fas fa-lock" style="position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem;"></i>
+            <input type="password" id="lpwd" name="password" class="form-control" style="padding-left:2.5rem;padding-right:2.5rem;" placeholder="••••••••" required>
+            <button type="button" onclick="togglePwd('lpwd','leye')" style="position:absolute;right:.85rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;">
+              <i class="fas fa-eye" id="leye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 py-2" style="font-size:.95rem;">
+          <i class="fas fa-sign-in-alt me-2"></i>Sign In Securely
+        </button>
+      </form>
+
+      <div style="text-align:center;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border);">
+        <span style="color:var(--muted);font-size:.875rem;">New here? </span>
+        <a href="{{ url_for('register') }}" style="color:var(--accent);font-weight:600;text-decoration:none;">Create an account</a>
+      </div>
+
+      <!-- Demo creds -->
+      <div style="margin-top:1.25rem;background:#f8fafc;border-radius:10px;padding:1rem;">
+        <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.6rem;">
+          <i class="fas fa-info-circle me-1"></i>Demo Credentials
+        </div>
+        <div style="font-size:.78rem;color:var(--text);display:flex;flex-direction:column;gap:.3rem;">
+          <div><span style="font-weight:700;color:#f59e0b;">Admin:</span> admin@college.edu / Admin@123!</div>
+          <div><span style="font-weight:700;color:#6366f1;">Alumni:</span> aarav.sharma@email.com / Aarav@2018!</div>
+          <div><span style="font-weight:700;color:#10b981;">Student:</span> arjun.patel@student.edu / Arjun@2024!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.btn-check:checked + .role-opt{border-color:var(--accent);background:#ede9fe;}
+.role-opt:hover{border-color:var(--accent2);background:#f5f3ff;}
+</style>
+<script>
+function togglePwd(id,iconId){
+  const i=document.getElementById(id),e=document.getElementById(iconId);
+  i.type=i.type==='password'?'text':'password';
+  e.className=i.type==='password'?'fas fa-eye':'fas fa-eye-slash';
+}
+</script>
+{% endblock %}

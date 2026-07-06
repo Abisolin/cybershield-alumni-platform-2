@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div style="margin-bottom:1.25rem;">
+  <h4 style="font-family:'Space Grotesk',sans-serif;font-weight:800;margin-bottom:.2rem;"><i class="fas fa-user-circle me-2 text-primary"></i>My Profile</h4>
+  <p style="color:var(--muted);font-size:.875rem;">View and update your personal information</p>
+</div>
+<div style="display:grid;grid-template-columns:280px 1fr;gap:1.5rem;max-width:960px;">
+  <!-- Left card -->
+  <div class="card" style="text-align:center;padding:1.75rem;height:fit-content;">
+    <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#818cf8);display:flex;align-items:center;justify-content:center;margin:0 auto .85rem;font-size:1.75rem;color:#fff;font-weight:800;">
+      {{ user['full_name'][0] }}
+    </div>
+    <h6 style="font-weight:700;margin-bottom:.25rem;">{{ user['full_name'] }}</h6>
+    <div style="color:var(--muted);font-size:.82rem;margin-bottom:.5rem;">{{ user['job_title'] or '—' }}</div>
+    <span class="badge-role-{{ user['role'] }}">{{ user['role'].upper() }}</span>
+    <hr>
+    <div style="text-align:left;font-size:.82rem;display:flex;flex-direction:column;gap:.4rem;">
+      <div><strong>ID:</strong> {{ user['student_id'] or '—' }}</div>
+      <div><strong>Email:</strong> {{ user['email'] }}</div>
+      <div><strong>Dept:</strong> {{ user['department'] or '—' }}</div>
+      {% if user['role']=='alumni' %}
+      <div><strong>Batch:</strong> {{ user['graduation_year'] or '—' }}</div>
+      <div><strong>Company:</strong> {{ user['company'] or '—' }}</div>
+      {% elif user['role']=='student' %}
+      <div><strong>Year:</strong> {{ user['current_year'] or '—' }}</div>
+      {% endif %}
+      <div><strong>Degree:</strong> {{ user['degree'] or '—' }}</div>
+    </div>
+    <hr>
+    <div>
+      <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.5px;margin-bottom:.4rem;">Password Hash</div>
+      <span class="hash-badge hb-{{ user['hash_method'] }}">{{ user['hash_method'].upper() }}</span>
+    </div>
+    {% if user['last_login'] %}
+    <div style="margin-top:.75rem;font-size:.72rem;color:var(--muted);">Last login: {{ user['last_login'][:16] }}</div>
+    {% endif %}
+  </div>
+
+  <!-- Edit Form -->
+  <div class="card">
+    <div class="card-header"><span style="font-weight:700;font-size:.9rem;"><i class="fas fa-edit me-2 text-primary"></i>Edit Profile</span></div>
+    <div class="card-body" style="padding:1.5rem;">
+      <form method="POST">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Phone</label>
+            <input type="text" name="phone" class="form-control" value="{{ user['phone'] or '' }}">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Department</label>
+            <input type="text" name="department" class="form-control" value="{{ user['department'] or '' }}">
+          </div>
+          {% if user['role'] in ['alumni','admin'] %}
+          <div class="col-md-6">
+            <label class="form-label">Company</label>
+            <input type="text" name="company" class="form-control" value="{{ user['company'] or '' }}">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Job Title</label>
+            <input type="text" name="job_title" class="form-control" value="{{ user['job_title'] or '' }}">
+          </div>
+          {% endif %}
+          <div class="col-md-6">
+            <label class="form-label">Location</label>
+            <input type="text" name="location" class="form-control" value="{{ user['location'] or '' }}">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">LinkedIn URL</label>
+            <input type="text" name="linkedin" class="form-control" value="{{ user['linkedin'] or '' }}">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Bio</label>
+            <textarea name="bio" class="form-control" rows="3">{{ user['bio'] or '' }}</textarea>
+          </div>
+        </div>
+        <div style="margin-top:1.25rem;display:flex;gap:.75rem;">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save Changes</button>
+          <a href="{{ url_for('change_password') }}" class="btn btn-light"><i class="fas fa-key me-2"></i>Change Password</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

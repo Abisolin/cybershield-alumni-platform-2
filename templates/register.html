@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% block title %}Register — Alumni MS{% endblock %}
+{% block auth_content %}
+<div class="auth-wrap" style="align-items:flex-start;padding:2rem;">
+  <div style="width:100%;max-width:820px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:2rem;">
+      <h2 style="font-family:'Space Grotesk',sans-serif;color:#fff;font-size:2rem;font-weight:800;">Create Account</h2>
+      <p style="color:rgba(255,255,255,.6);">Join the alumni network — choose your role below</p>
+    </div>
+    <div class="auth-card" style="display:block;">
+      <div style="padding:2rem 2.5rem;">
+        <form method="POST" id="regForm">
+
+          <!-- ROLE -->
+          <div style="margin-bottom:2rem;">
+            <label class="form-label">I am a</label>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;" id="roleCards">
+              {% for role,label,icon,desc,color in [
+                ('alumni','Alumni','fa-user-tie','Post opportunities','#6366f1'),
+                ('student','Student','fa-graduation-cap','Browse & apply','#10b981')
+              ] %}
+              <input type="radio" class="btn-check" name="role" id="rc_{{ role }}" value="{{ role }}" {% if role=='alumni' %}checked{% endif %} onchange="updateFields()">
+              <label for="rc_{{ role }}" class="role-card-opt" style="border:2px solid var(--border);border-radius:12px;padding:1rem;cursor:pointer;transition:.15s;text-align:center;">
+                <i class="fas {{ icon }}" style="font-size:1.5rem;color:{{ color }};margin-bottom:.5rem;display:block;"></i>
+                <div style="font-weight:700;font-size:.9rem;">{{ label }}</div>
+                <div style="color:var(--muted);font-size:.75rem;">{{ desc }}</div>
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <!-- Always shown -->
+            <div class="col-md-6">
+              <label class="form-label">Student / Staff ID <span style="color:red">*</span></label>
+              <input type="text" name="student_id" class="form-control" value="{{ form.get('student_id','') }}" placeholder="CS2024001" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Full Name <span style="color:red">*</span></label>
+              <input type="text" name="full_name" class="form-control" value="{{ form.get('full_name','') }}" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Email Address <span style="color:red">*</span></label>
+              <input type="email" name="email" class="form-control" value="{{ form.get('email','') }}" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Phone Number</label>
+              <input type="text" name="phone" class="form-control" value="{{ form.get('phone','') }}" placeholder="+91-XXXXXXXXXX">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Department</label>
+              <select name="department" class="form-select">
+                <option value="">-- Select --</option>
+                {% for d in ['Computer Science','Information Technology','Electronics','Electrical Engineering','Mechanical Engineering','Civil Engineering','Biotechnology','Chemical Engineering','MBA'] %}
+                <option value="{{ d }}">{{ d }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Degree</label>
+              <select name="degree" class="form-select">
+                <option value="">-- Select --</option>
+                {% for d in ['B.Tech','M.Tech','B.E.','M.E.','PhD','MBA','BCA','MCA'] %}
+                <option value="{{ d }}">{{ d }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Alumni-specific -->
+            <div class="col-md-6 alumni-field student-hidden">
+              <label class="form-label">Graduation Year</label>
+              <select name="graduation_year" class="form-select">
+                <option value="">-- Year --</option>
+                {% for y in range(2024,2000,-1) %}<option>{{ y }}</option>{% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6 alumni-field student-hidden">
+              <label class="form-label">Current Company</label>
+              <input type="text" name="company" class="form-control" value="{{ form.get('company','') }}" placeholder="e.g. Google India">
+            </div>
+            <div class="col-md-6 alumni-field student-hidden">
+              <label class="form-label">Job Title</label>
+              <input type="text" name="job_title" class="form-control" value="{{ form.get('job_title','') }}" placeholder="e.g. Software Engineer">
+            </div>
+            <div class="col-md-6 alumni-field student-hidden">
+              <label class="form-label">Location</label>
+              <input type="text" name="location" class="form-control" value="{{ form.get('location','') }}" placeholder="City, Country">
+            </div>
+            <div class="col-12 alumni-field student-hidden">
+              <label class="form-label">LinkedIn URL</label>
+              <input type="text" name="linkedin" class="form-control" value="{{ form.get('linkedin','') }}" placeholder="linkedin.com/in/yourprofile">
+            </div>
+
+            <!-- Student-specific -->
+            <div class="col-md-6 student-field alumni-hidden" style="display:none;">
+              <label class="form-label">Current Year</label>
+              <select name="current_year" class="form-select">
+                <option value="">-- Year --</option>
+                {% for y in [1,2,3,4] %}<option value="{{ y }}">Year {{ y }}</option>{% endfor %}
+              </select>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Brief Bio</label>
+              <textarea name="bio" class="form-control" rows="2" placeholder="Tell us about yourself...">{{ form.get('bio','') }}</textarea>
+            </div>
+
+            <!-- Security -->
+            <div class="col-12" style="margin-top:.5rem;padding-top:1.25rem;border-top:1px solid var(--border);">
+              <label class="form-label">Password Hashing Algorithm</label>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1rem;">
+                {% for m,label,color,desc in [('bcrypt','bcrypt','#10b981','Adaptive · GPU resistant'),('pbkdf2','PBKDF2','#6366f1','310,000 iterations'),('sha256','SHA-256','#ef4444','Salted one-way')] %}
+                <input type="radio" class="btn-check" name="hash_method" id="hm_{{ m }}" value="{{ m }}" {% if m=='bcrypt' %}checked{% endif %}>
+                <label for="hm_{{ m }}" class="hash-opt" style="border:2px solid var(--border);border-radius:10px;padding:.75rem .5rem;text-align:center;cursor:pointer;font-size:.82rem;transition:.15s;">
+                  <span style="font-weight:700;color:{{ color }};display:block;margin-bottom:.2rem;">{{ label }}</span>
+                  <span style="color:var(--muted);font-size:.72rem;">{{ desc }}</span>
+                </label>
+                {% endfor %}
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Password <span style="color:red">*</span></label>
+              <div style="position:relative;">
+                <input type="password" name="password" id="regpwd" class="form-control" required oninput="checkStr(this.value)" placeholder="Min 8 chars">
+                <button type="button" onclick="togglePwd('regpwd','regeye')" style="position:absolute;right:.75rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;"><i class="fas fa-eye" id="regeye"></i></button>
+              </div>
+              <div style="background:var(--border);border-radius:3px;height:5px;margin-top:.5rem;overflow:hidden;">
+                <div id="strBar" class="pw-bar" style="width:0;"></div>
+              </div>
+              <small id="strText" style="color:var(--muted);">Enter password to check strength</small>
+              <div id="criteria" style="display:none;margin-top:.5rem;">
+                {% for cid,lbl in [('c1','Min 8 characters'),('c2','Uppercase letter'),('c3','Lowercase letter'),('c4','Number'),('c5','Special character')] %}
+                <small id="{{ cid }}" style="display:block;color:#94a3b8;"><i class="fas fa-circle" style="font-size:.45rem;margin-right:.4rem;"></i>{{ lbl }}</small>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Confirm Password <span style="color:red">*</span></label>
+              <div style="position:relative;">
+                <input type="password" name="confirm_password" id="confpwd" class="form-control" required oninput="checkMatch()" placeholder="Repeat password">
+                <button type="button" onclick="togglePwd('confpwd','confeye')" style="position:absolute;right:.75rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;"><i class="fas fa-eye" id="confeye"></i></button>
+              </div>
+              <small id="matchTxt" style="color:var(--muted);">Confirm your password</small>
+            </div>
+          </div>
+
+          <div style="margin-top:1.75rem;display:flex;gap:.75rem;align-items:center;">
+            <button type="submit" class="btn btn-primary px-4 py-2">
+              <i class="fas fa-user-plus me-2"></i>Create Account
+            </button>
+            <a href="{{ url_for('login') }}" style="color:var(--muted);text-decoration:none;font-size:.875rem;">Already registered? Login</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.btn-check:checked+.role-card-opt{border-color:var(--accent);background:#f5f3ff;}
+.role-card-opt:hover{border-color:var(--accent2);}
+.btn-check:checked+.hash-opt{border-color:var(--accent);background:#f5f3ff;}
+</style>
+<script>
+const C=['#ef4444','#f97316','#f59e0b','#10b981','#6366f1'];
+const L=['Very Weak','Weak','Fair','Strong','Very Strong'];
+function checkStr(pw){
+  document.getElementById('criteria').style.display='block';
+  const checks=[pw.length>=8,/[A-Z]/.test(pw),/[a-z]/.test(pw),/\d/.test(pw),/[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(pw)];
+  const score=checks.filter(Boolean).length;
+  const bar=document.getElementById('strBar');
+  bar.style.width=(score*20)+'%'; bar.style.background=C[score-1]||'#ef4444';
+  const t=document.getElementById('strText'); t.textContent=score?L[score-1]:'Enter password'; t.style.color=C[score-1]||'#94a3b8';
+  ['c1','c2','c3','c4','c5'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.style.color=checks[i]?'#10b981':'#94a3b8';
+    el.querySelector('i').className=checks[i]?'fas fa-check-circle':'fas fa-circle';
+    el.querySelector('i').style.fontSize=checks[i]?'':'0.45rem';
+  });
+}
+function checkMatch(){
+  const p=document.getElementById('regpwd').value,c=document.getElementById('confpwd').value,t=document.getElementById('matchTxt');
+  if(!c){t.textContent='Confirm your password';t.style.color='var(--muted)';return;}
+  t.textContent=p===c?'✓ Passwords match':'✗ Passwords do not match';
+  t.style.color=p===c?'#10b981':'#ef4444';
+}
+function togglePwd(id,eid){
+  const i=document.getElementById(id),e=document.getElementById(eid);
+  i.type=i.type==='password'?'text':'password';
+  e.className=i.type==='password'?'fas fa-eye':'fas fa-eye-slash';
+}
+function updateFields(){
+  const role=document.querySelector('input[name="role"]:checked').value;
+  document.querySelectorAll('.student-field').forEach(el=>el.style.display=role==='student'?'':'none');
+  document.querySelectorAll('.alumni-field').forEach(el=>el.style.display=role==='student'?'none':'');
+}
+updateFields();
+</script>
+{% endblock %}

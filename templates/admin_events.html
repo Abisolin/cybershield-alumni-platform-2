@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}All Events — Admin{% endblock %}
+{% block content %}
+<h4 style="font-family:'Space Grotesk',sans-serif;font-weight:800;margin-bottom:1.25rem;">All Events</h4>
+<div class="card">
+  <div style="overflow-x:auto;">
+    <table class="table-custom" style="width:100%;">
+      <thead><tr><th>Title</th><th>Type</th><th>Date</th><th>Location</th><th>Organizer</th><th>Seats</th></tr></thead>
+      <tbody>
+        {% for e in events %}
+        <tr>
+          <td style="font-weight:600;font-size:.875rem;">{{ e['title'] }}</td>
+          <td><span class="badge-type">{{ e['event_type'] }}</span></td>
+          <td style="font-size:.82rem;">{{ e['event_date'] }}</td>
+          <td style="font-size:.82rem;color:var(--muted);">{{ e['location'] or '—' }}</td>
+          <td style="font-size:.82rem;">{{ e['organizer'] }}</td>
+          <td style="font-size:.82rem;">{{ e['max_seats'] }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted);">No events.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
